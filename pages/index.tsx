@@ -1,13 +1,30 @@
-import Link from 'next/link'
-import Layout from '../components/Layout'
+import React, { useEffect } from 'react';
+import Layout from '../components/Layout';
+import LoginPage from './login';
+import { useAuth } from '../context/AuthContext';
 
-const IndexPage = () => (
-  <Layout title="Home | Next.js + TypeScript Example">
-    <h1>Hello Next.js 👋</h1>
-    <p>
-      <Link href="/about">About</Link>
-    </p>
-  </Layout>
-)
+const HomePage = () => {
+  const { user } = useAuth();
 
-export default IndexPage
+  useEffect(() => {
+    // Fetch additional user data or perform actions when the component mounts
+    if (user) {
+      console.log('User credentials:', user);
+    }
+  }, [user]);
+  return (
+    <Layout pageTitle="Home">
+      {user?.username ? (
+        <>
+          <h2>Welcome, {user.username}!</h2>
+        </>
+      ) : (
+        <>
+          <LoginPage />
+        </>
+      )}
+    </Layout>
+  );
+};
+
+export default HomePage;
