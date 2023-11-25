@@ -3,6 +3,8 @@ import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Profile from "./Profile";
 import Notifications from "./Notifications";
+import Trip from "./Trips";
+
 
 const Dashboard = () => {
   const [activeItem, setActiveItem] = useState<string>("dashboard");
@@ -24,6 +26,8 @@ const Dashboard = () => {
         return <Profile />;
       case "notifications":
         return <Notifications />;
+      case "your trips":
+            return <Trip />;
       default:
         return null;
     }

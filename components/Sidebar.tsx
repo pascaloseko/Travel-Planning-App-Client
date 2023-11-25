@@ -73,6 +73,11 @@ const Sidebar: React.FC<SidebarProps> = ({ onSidebarItemClick }) => {
             isActive={activeItem === "notifications"}
             onClick={() => handleItemClick("notifications")}
           />
+          <SidebarItem
+            title="your trips"
+            isActive={activeItem === "your trips"}
+            onClick={() => handleItemClick("your trips")}
+          />
         </ul>
       </div>
     </aside>

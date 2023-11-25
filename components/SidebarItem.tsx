@@ -68,6 +68,22 @@ const SidebarItem: React.FC<SidebarItemProps> = ({
             ></path>
           </svg>
         );
+        case "your trips":
+            return (
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                aria-hidden="true"
+                className="w-5 h-5 text-inherit"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M13 1.5a.5.5 0 0 1 .5.5V6h6a.5.5 0 0 1 0 1h-7.5v5h2a.5.5 0 0 1 0 1h-2v4.5a.5.5 0 0 1-1 0V14H7a.5.5 0 0 1 0-1h3V7H6a.5.5 0 0 1 0-1h6v-4a.5.5 0 0 1 .5-.5zM2.5 10a.5.5 0 0 1 0 1H1v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V11h-1.5a.5.5 0 0 1 0-1H19v-1a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v1H2.5z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            );
       default:
         return null; // Return null if there's no matching title
     }
