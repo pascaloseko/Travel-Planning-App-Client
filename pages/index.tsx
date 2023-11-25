@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Layout from '../components/Layout';
 import LoginPage from './login';
-import DashboardPage from './dashboard'
+import DashboardPage from './dashboard';
 import { useAuth } from '../context/AuthContext';
 
 const HomePage = () => {

@@ -1,4 +1,14 @@
-const SidebarItem = ({ title, isActive = false }) => {
+interface SidebarItemProps {
+  title: string;
+  isActive?: boolean;
+  onClick: () => void;
+}
+
+const SidebarItem: React.FC<SidebarItemProps> = ({
+  title,
+  isActive = false,
+  onClick,
+}) => {
   const activeClass = "active";
 
   const buttonClasses = `
@@ -66,7 +76,7 @@ const SidebarItem = ({ title, isActive = false }) => {
   return (
     <li>
       <a aria-current="page" className={isActive ? activeClass : ""} href="#">
-        <button className={buttonClasses} type="button">
+        <button className={buttonClasses} type="button" onClick={onClick}>
           {getIcon(title)}
           <p className="block antialiased font-sans text-base leading-relaxed text-inherit font-medium capitalize">
             {title}
