@@ -1,17 +1,10 @@
-import '../styles/global.css';
-import { CookiesProvider } from 'react-cookie';
-import { AuthProvider } from '../context/AuthContext';
+import "../styles/global.css";
+import { AuthProvider } from "../context/AuthContext";
 
-export default function App({
-  Component,
-  pageProps: { session, ...pageProps },
-}) {
+export default function App({ Component, pageProps: { ...pageProps } }) {
   return (
-    
-    <CookiesProvider>
-        <AuthProvider>
-        <Component {...pageProps} />
-        </AuthProvider>
-    </CookiesProvider>
+    <AuthProvider>
+      <Component {...pageProps} />
+    </AuthProvider>
   );
 }

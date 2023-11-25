@@ -1,5 +1,4 @@
 import Layout from "../components/Layout";
-import Link from "next/link";
 import { useAuth } from "../context/AuthContext";
 import AuthForm from "../components/AuthForm";
 import { useRouter } from "next/router";

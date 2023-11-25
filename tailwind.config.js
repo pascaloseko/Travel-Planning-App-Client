@@ -10,4 +10,10 @@ module.exports = {
     extend: {},
   },
   plugins: [],
+  variants: {
+    extend: {
+      opacity: ['disabled', 'active'],
+      boxShadow: ['active'],
+    },
+  },
 };
