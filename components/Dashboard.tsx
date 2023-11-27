@@ -5,7 +5,6 @@ import Profile from "./Profile";
 import Notifications from "./Notifications";
 import Trip from "./Trips";
 
-
 const Dashboard = () => {
   const [activeItem, setActiveItem] = useState<string>("dashboard");
 
@@ -27,10 +26,21 @@ const Dashboard = () => {
       case "notifications":
         return <Notifications />;
       case "your trips":
-            return <Trip />;
+        return <Trip />;
       default:
         return null;
     }
+  };
+
+  const renderPageTitle = () => {
+    if (activeItem === "your trips") {
+      return null; // Don't render the title for "your trips"
+    }
+    return (
+      <h1 className="text-2xl font-semibold">
+        {capitalizeFirstLetter(activeItem)} Page
+      </h1>
+    );
   };
 
   return (
@@ -48,10 +58,7 @@ const Dashboard = () => {
           {/* Your page content goes here */}
           {/* For example, you can add a container div and other components */}
           <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-semibold">
-              {" "}
-              {capitalizeFirstLetter(activeItem)} Page
-            </h1>
+            {renderPageTitle()}
             {renderPageContent()}
           </div>
         </main>

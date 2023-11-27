@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 
 const LoginPage = () => {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, loading } = useAuth();
 
   const handleLogin = async ({ email, password }) => {
     return login(email, password);
@@ -16,11 +16,15 @@ const LoginPage = () => {
   };
   return (
     <Layout pageTitle="Login">
-      <AuthForm
-        title="Login"
-        onSubmit={handleLogin}
-        onSuccess={handleLoginSuccess}
-      />
+      {loading ? ( // Conditional rendering of loading spinner
+        <div>Loading...</div>
+      ) : (
+        <AuthForm
+          title="Login"
+          onSubmit={handleLogin}
+          onSuccess={handleLoginSuccess}
+        />
+      )}
     </Layout>
   );
 };

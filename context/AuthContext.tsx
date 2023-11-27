@@ -24,6 +24,7 @@ interface User {
 interface AuthContextValue {
   user: User | null;
   isAuthenticated: boolean;
+  loading: boolean;
   login: (email: string, password: string) => Promise<void>;
   signUp: (username: string, email: string, password: string) => Promise<void>;
   logout: () => void;
@@ -35,6 +36,7 @@ const TOKEN_STORAGE_KEY = "app_token";
 
 export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -68,6 +70,9 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
+
+      setLoading(true);
+
       const response = await fetch(`${DEV_SERVER_URL}/api/v1/token`, {
         method: "POST",
         headers: {
@@ -84,7 +89,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
       const tokenExpiration = Date.now() + 30 * 60 * 1000; // 30 minutes
       const userWithExpiration = { ...userData, token, tokenExpiration };
       setUser(userWithExpiration);
-
+      setLoading(false);
       // Store token in local storage
       localStorage.setItem(
         TOKEN_STORAGE_KEY,
@@ -98,6 +103,8 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
 
   const signUp = async (username: string, email: string, password: string) => {
     try {
+      setLoading(true);
+
       const response = await fetch(`${DEV_SERVER_URL}/api/v1/signup`, {
         method: "POST",
         headers: {
@@ -114,7 +121,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
       const tokenExpiration = Date.now() + 30 * 60 * 1000; // 30 minutes
       const userWithExpiration = { ...userData, token, tokenExpiration };
       setUser(userWithExpiration);
-
+      setLoading(false);
       // Store token in local storage
       localStorage.setItem(
         TOKEN_STORAGE_KEY,
@@ -179,6 +186,7 @@ export const AuthProvider: React.FC<AuthContextProps> = ({ children }) => {
   const contextValue: AuthContextValue = {
     user,
     isAuthenticated,
+    loading,
     login,
     signUp,
     logout,
