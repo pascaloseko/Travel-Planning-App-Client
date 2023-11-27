@@ -9,9 +9,10 @@ interface TableProps {
   data: any[];
   columns: any[];
   loading: boolean;
+  onIconClick?: (tripId: number, bookingType: string) => void;
 }
 
-const Table: React.FC<TableProps> = ({ data, columns, loading }) => {
+const Table: React.FC<TableProps> = ({ data, columns, loading, onIconClick }) => {
   if (loading) {
     // If data is loading, display a pulse loader
     return (
@@ -47,7 +48,7 @@ const Table: React.FC<TableProps> = ({ data, columns, loading }) => {
               >
                 {column.render
                   ? column.render(row)
-                  : renderColumnValue(column, row)}
+                  : renderColumnValue(column, row, onIconClick)}
               </td>
             ))}
           </tr>
@@ -57,21 +58,21 @@ const Table: React.FC<TableProps> = ({ data, columns, loading }) => {
   );
 };
 
-const renderColumnValue = (column, row) => {
+const renderColumnValue = (column, row, onIconClick) => {
   if (
     column.key === "hotel_booking" ||
     column.key === "flight_booking" ||
     column.key === "itinerary"
   ) {
-    return renderBookingButtons(column.key, row);
+    return renderBookingButtons(column.key, row, onIconClick);
   }
 
   return row[column.key];
 };
 
-const renderBookingButtons = (bookingType, row) => {
+const renderBookingButtons = (bookingType, row, onIconClick) => {
   const handleIconClick = () => {
-    console.log("Trip ID:", row.id);
+    onIconClick(row.id, bookingType);
   };
 
   return (
