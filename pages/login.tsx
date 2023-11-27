@@ -1,6 +1,7 @@
 import Layout from "../components/Layout";
 import { useAuth } from "../context/AuthContext";
 import AuthForm from "../components/AuthForm";
+import Loader from "../components/Loader";
 import { useRouter } from "next/router";
 
 const LoginPage = () => {
@@ -16,8 +17,8 @@ const LoginPage = () => {
   };
   return (
     <Layout pageTitle="Login">
-      {loading ? ( // Conditional rendering of loading spinner
-        <div>Loading...</div>
+      {loading ? ( // Conditional rendering of loader
+        <Loader />
       ) : (
         <AuthForm
           title="Login"
