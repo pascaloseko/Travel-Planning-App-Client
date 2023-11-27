@@ -1,4 +1,5 @@
 import React from "react";
+import { PaperAirplaneIcon, BuildingStorefrontIcon } from "@heroicons/react/24/solid";
 
 interface TableProps {
   data: any[];
@@ -40,13 +41,35 @@ const Table: React.FC<TableProps> = ({ data, columns, loading }) => {
                 key={columnIndex}
                 className="px-4 py-4 text-sm whitespace-nowrap"
               >
-                {column.render ? column.render(row) : row[column.key]}
+                {column.render
+                  ? column.render(row)
+                  : renderColumnValue(column, row)}
               </td>
             ))}
           </tr>
         ))}
       </tbody>
     </table>
+  );
+};
+
+const renderColumnValue = (column, row) => {
+  if (column.key === "hotel_booking" || column.key === "flight_booking") {
+    return renderBookingButtons(column.key, row);
+  }
+
+  return row[column.key];
+};
+
+const renderBookingButtons = (bookingType, row) => {
+  return (
+    <div className="flex ml-8 cursor-pointer">
+      {bookingType === "hotel_booking" ? (
+        <BuildingStorefrontIcon className="w-5 h-5 text-green-500" />
+      ) : bookingType === "flight_booking" ? (
+        <PaperAirplaneIcon className="w-5 h-5 text-blue-500" />
+      ) : null}
+    </div>
   );
 };
 

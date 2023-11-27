@@ -12,6 +12,9 @@ module.exports = {
           bounce200: 'bounce 1s infinite 200ms',
           bounce400: 'bounce 1s infinite 400ms',
       },
+      cursor: {
+        pointer: 'pointer',
+      },
   },
   },
   plugins: [],
@@ -19,6 +22,7 @@ module.exports = {
     extend: {
       opacity: ['disabled', 'active'],
       boxShadow: ['active'],
+      cursor: ['hover', 'focus'],
     },
   },
 };

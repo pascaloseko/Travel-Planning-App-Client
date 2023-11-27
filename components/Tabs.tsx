@@ -11,24 +11,22 @@ const Tabs = () => {
   const trips = [
     {
       id: 1,
-      user_id: 1,
       title: "Suswa Trip",
       start_date: "2023-12-03",
       end_date: "2023-12-05",
     },
-    {
-      id: 2,
-      user_id: 1,
-      title: "Diani Trip",
-      start_date: "2023-12-21",
-      end_date: "2023-12-24",
-    },
   ];
 
-  const columns = Object.keys(trips[0]).map((key) => ({ key, header: key }));
+  const tripColumns = [
+    { key: 'title', header: 'Title' },
+    { key: 'start_date', header: 'Start Date' },
+    { key: 'end_date', header: 'End Date' },
+    { key: 'hotel_booking', header: 'Hotel Booking' },
+    { key: 'flight_booking', header: 'Flight Booking' },
+  ];
 
   const tabs = [
-    { label: "Trips", content: <Table data={tripData} columns={columns} loading={!tripData.length} /> },
+    { label: "Trips", content: <Table data={tripData} columns={tripColumns} loading={!tripData.length} /> },
   ];
 
   useEffect(() => {
