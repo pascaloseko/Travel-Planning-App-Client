@@ -8,35 +8,39 @@ const Tabs = () => {
   const [tripData, setTripData] = useState([]);
   const { user } = useAuth();
 
-  const trips = [
-    {
-      id: 1,
-      title: "Suswa Trip",
-      start_date: "2023-12-03",
-      end_date: "2023-12-05",
-    },
-  ];
-
   const tripColumns = [
-    { key: 'title', header: 'Title' },
-    { key: 'start_date', header: 'Start Date' },
-    { key: 'end_date', header: 'End Date' },
-    { key: 'hotel_booking', header: 'Hotel Booking' },
-    { key: 'flight_booking', header: 'Flight Booking' },
+    { key: "title", header: "Title" },
+    { key: "start_date", header: "Start Date" },
+    { key: "end_date", header: "End Date" },
+    { key: "itinerary", header: "Itinerary" },
+    { key: "hotel_booking", header: "Hotel Booking" },
+    { key: "flight_booking", header: "Flight Booking" },
   ];
 
   const tabs = [
-    { label: "Trips", content: <Table data={tripData} columns={tripColumns} loading={!tripData.length} /> },
+    {
+      label: "Trips",
+      content: (
+        <Table
+          data={tripData}
+          columns={tripColumns}
+          loading={!tripData.length}
+        />
+      ),
+    },
   ];
 
   useEffect(() => {
     const fetchTripData = async () => {
       try {
-        const response = await fetch(`${DEV_SERVER_URL}/api/v1/protected/trips`, {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-        });
+        const response = await fetch(
+          `${DEV_SERVER_URL}/api/v1/protected/trips`,
+          {
+            headers: {
+              Authorization: `Bearer ${user?.token}`,
+            },
+          }
+        );
 
         if (!response.ok) {
           throw new Error("Failed to fetch data");
