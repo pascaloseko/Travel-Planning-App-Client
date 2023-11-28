@@ -3,14 +3,10 @@ import Table from "./Table";
 import { useAuth } from "../context/AuthContext";
 import { DEV_SERVER_URL } from "../config";
 
-const Tabs = () => {
+const Tabs = ({selectedTripInfo, setSelectedTripInfo}) => {
   const [activeTab, setActiveTab] = useState(0);
   const [tripData, setTripData] = useState([]);
   const [bookingData, setBookingData] = useState([]);
-  const [selectedTripInfo, setSelectedTripInfo] = useState({
-    tripID: null,
-    bookingType: null,
-  });
   const { user } = useAuth();
 
   const columns = {

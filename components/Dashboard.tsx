@@ -7,6 +7,10 @@ import Trip from "./Trips";
 
 const Dashboard = () => {
   const [activeItem, setActiveItem] = useState<string>("dashboard");
+  const [selectedTripInfo, setSelectedTripInfo] = useState({
+    tripID: null,
+    bookingType: null,
+  });
 
   const handleSidebarItemClick = (item: string) => {
     // Update the active item in the state
@@ -15,6 +19,11 @@ const Dashboard = () => {
 
   const capitalizeFirstLetter = (input: string) => {
     return input.charAt(0).toUpperCase() + input.slice(1);
+  };
+
+  const handleClearTripInfo = () => {
+    console.log("CLEARED")
+    setSelectedTripInfo({ tripID: null, bookingType: null });
   };
 
   const renderPageContent = () => {
@@ -26,7 +35,12 @@ const Dashboard = () => {
       case "notifications":
         return <Notifications />;
       case "your trips":
-        return <Trip />;
+        return (
+          <Trip
+            selectedTripInfo={selectedTripInfo}
+            setSelectedTripInfo={setSelectedTripInfo}
+          />
+        );
       default:
         return null;
     }
@@ -51,7 +65,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden pl-72">
         {/* Navbar */}
-        <Navbar activeItem={activeItem} />
+        <Navbar activeItem={activeItem} clearTripInfo={handleClearTripInfo} />
 
         {/* Page Content */}
         <main className="flex-1 overflow-x-hidden overflow-y-auto bg-gray-200 flex flex-col">

@@ -1,9 +1,9 @@
 import Tabs from "./Tabs";
 
-const Trip = () => {
+const Trip = ({selectedTripInfo, setSelectedTripInfo}) => {
     return (
       <div>
-        <Tabs />
+        <Tabs selectedTripInfo={selectedTripInfo} setSelectedTripInfo={setSelectedTripInfo} />
       </div>
     );
   };
