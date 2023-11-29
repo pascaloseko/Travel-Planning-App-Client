@@ -3,7 +3,7 @@ import Table from "./Table";
 import { useAuth } from "../context/AuthContext";
 import { DEV_SERVER_URL } from "../config";
 
-const Tabs = ({selectedTripInfo, setSelectedTripInfo}) => {
+const Tabs = ({ selectedTripInfo, setSelectedTripInfo }) => {
   const [activeTab, setActiveTab] = useState(0);
   const [tripData, setTripData] = useState([]);
   const [bookingData, setBookingData] = useState([]);
@@ -89,9 +89,15 @@ const Tabs = ({selectedTripInfo, setSelectedTripInfo}) => {
             },
           }
         );
-      } else if (bookingType === "flight_booking" || bookingType === "hotel_booking") {
+      } else if (
+        bookingType === "flight_booking" ||
+        bookingType === "hotel_booking"
+      ) {
         // Handle flight_booking and hotel_booking differently
-        const formattedBookingType = String(bookingType).replace(/_booking/g, "");
+        const formattedBookingType = String(bookingType).replace(
+          /_booking/g,
+          ""
+        );
         response = await fetch(
           `${DEV_SERVER_URL}/api/v1/protected/${tripId}/${formattedBookingType}-bookings`,
           {
@@ -111,9 +117,9 @@ const Tabs = ({selectedTripInfo, setSelectedTripInfo}) => {
       setBookingData(data);
 
       // Set selectedTripInfo to null if booking data is empty
-    if (!data || data.length === 0) {
-      setSelectedTripInfo({ tripID: null, bookingType: null });
-    }
+      if (!data || data.length === 0) {
+        setSelectedTripInfo({ tripID: null, bookingType: null });
+      }
     } catch (error) {
       console.error("Fetch error:", error);
       // Handle error as needed
@@ -152,17 +158,28 @@ const Tabs = ({selectedTripInfo, setSelectedTripInfo}) => {
     <div className="bg-white">
       <nav className="flex flex-col sm:flex-row">
         {tabs.map((tab, index) => (
-          <button
+          <div
             key={index}
-            className={`${
-              activeTab === index
-                ? "text-blue-500 border-b-2 font-medium border-blue-500"
-                : "text-gray-600"
-            } flex-1 py-4 px-6 block hover:text-blue-500 focus:outline-none`}
+            className={`flex-1 py-4 px-6 block hover:text-blue-500 focus:outline-none flex items-center`}
             onClick={() => setActiveTab(index)}
           >
-            {tab.label}
-          </button>
+            <span className="mr-2">{tab.label}</span>
+            {index === activeTab && (
+              <button
+                className="ml-auto bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 focus:outline-none"
+                onClick={() => console.log("Button Clicked")}
+              >
+                Add{" "}
+                {selectedTripInfo.bookingType == "flight_booking"
+                  ? `Flight Booking`
+                  : selectedTripInfo.bookingType == "hotel_booking"
+                  ? `Hotel Booking`
+                  : selectedTripInfo.bookingType == "itinerary"
+                  ? `Itinerary`
+                  : `Trip`}
+              </button>
+            )}
+          </div>
         ))}
       </nav>
       <div className="p-4">{tabs[activeTab].content}</div>
