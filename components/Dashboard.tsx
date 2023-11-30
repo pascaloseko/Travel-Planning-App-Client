@@ -11,6 +11,8 @@ const Dashboard = () => {
     tripID: null,
     bookingType: null,
   });
+  const [showForm, setShowForm] = useState(false);
+
 
   const handleSidebarItemClick = (item: string) => {
     // Update the active item in the state
@@ -24,6 +26,7 @@ const Dashboard = () => {
   const handleClearTripInfo = () => {
     console.log("CLEARED")
     setSelectedTripInfo({ tripID: null, bookingType: null });
+    setShowForm(false);
   };
 
   const renderPageContent = () => {
@@ -39,6 +42,8 @@ const Dashboard = () => {
           <Trip
             selectedTripInfo={selectedTripInfo}
             setSelectedTripInfo={setSelectedTripInfo}
+            setShowForm={setShowForm}
+            showForm={showForm}
           />
         );
       default:
