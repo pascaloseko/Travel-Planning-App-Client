@@ -4,30 +4,19 @@ import Sidebar from "./Sidebar";
 import Profile from "./Profile";
 import Notifications from "./Notifications";
 import Trip from "./Trips";
+import {
+  ActiveItemProvider,
+  useActiveItemContext,
+} from "../context/ActiveItemContext";
+import {
+  TripInfoProvider,
+  useTripInfoContext,
+} from "../context/TripInfoContext";
 
-const Dashboard = () => {
-  const [activeItem, setActiveItem] = useState<string>("dashboard");
-  const [selectedTripInfo, setSelectedTripInfo] = useState({
-    tripID: null,
-    bookingType: null,
-  });
-  const [showForm, setShowForm] = useState(false);
+const DashboardContent = () => {
+  const { activeItem, handleSidebarItemClick } = useActiveItemContext();
 
-
-  const handleSidebarItemClick = (item: string) => {
-    // Update the active item in the state
-    setActiveItem(item);
-  };
-
-  const capitalizeFirstLetter = (input: string) => {
-    return input.charAt(0).toUpperCase() + input.slice(1);
-  };
-
-  const handleClearTripInfo = () => {
-    console.log("CLEARED")
-    setSelectedTripInfo({ tripID: null, bookingType: null });
-    setShowForm(false);
-  };
+  const { handleClearTripInfo } = useTripInfoContext();
 
   const renderPageContent = () => {
     switch (activeItem) {
@@ -39,16 +28,15 @@ const Dashboard = () => {
         return <Notifications />;
       case "your trips":
         return (
-          <Trip
-            selectedTripInfo={selectedTripInfo}
-            setSelectedTripInfo={setSelectedTripInfo}
-            setShowForm={setShowForm}
-            showForm={showForm}
-          />
+          <Trip/>
         );
       default:
         return null;
     }
+  };
+
+  const capitalizeFirstLetter = (input: string) => {
+    return input.charAt(0).toUpperCase() + input.slice(1);
   };
 
   const renderPageTitle = () => {
@@ -83,6 +71,16 @@ const Dashboard = () => {
         </main>
       </div>
     </div>
+  );
+};
+
+const Dashboard: React.FC = () => {
+  return (
+    <ActiveItemProvider>
+      <TripInfoProvider>
+        <DashboardContent />
+      </TripInfoProvider>
+    </ActiveItemProvider>
   );
 };
 

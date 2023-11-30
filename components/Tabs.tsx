@@ -4,16 +4,16 @@ import { useAuth } from "../context/AuthContext";
 import { DEV_SERVER_URL } from "../config";
 import AddForm from "./AddForm";
 
-const Tabs = ({
-  selectedTripInfo,
-  setSelectedTripInfo,
-  setShowForm,
-  showForm,
-}) => {
+import { useTripInfoContext } from "../context/TripInfoContext";
+
+const Tabs = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [tripData, setTripData] = useState([]);
   const [bookingData, setBookingData] = useState([]);
   const { user } = useAuth();
+
+  const { setSelectedTripInfo, setShowForm, selectedTripInfo, showForm } =
+    useTripInfoContext();
 
   const columns = {
     trip: [
@@ -194,7 +194,7 @@ const Tabs = ({
       </nav>
 
       {showForm ? (
-        <AddForm selectedTripInfo={selectedTripInfo} />
+        <AddForm />
       ) : (
         <div className="p-4">{tabs[activeTab].content}</div>
       )}

@@ -1,19 +1,9 @@
 import Tabs from "./Tabs";
 
-const Trip = ({
-  selectedTripInfo,
-  setSelectedTripInfo,
-  setShowForm,
-  showForm,
-}) => {
+const Trip = () => {
   return (
     <div>
-      <Tabs
-        selectedTripInfo={selectedTripInfo}
-        setSelectedTripInfo={setSelectedTripInfo}
-        setShowForm={setShowForm}
-        showForm={showForm}
-      />
+      <Tabs />
     </div>
   );
 };
