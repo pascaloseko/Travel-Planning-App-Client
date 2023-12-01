@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTripInfoContext } from "../context/TripInfoContext";
 import DateRangePicker from "./DateRangePicker";
+import TimePicker from "./TimePicker";
 
 const AddForm = () => {
   const { selectedTripInfo } = useTripInfoContext();
+  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [endTime, setEndTime] = useState<Date | null>(null);
 
   const renderInputField = (placeholder) => (
     <input
@@ -54,6 +57,9 @@ const AddForm = () => {
               <>
                 {renderInputField("Trip Title")}
                 <DateRangePicker />
+                {/* <br /> */}
+                {/* <TimePicker label="Start Time" selectedTime={startTime} onChange={setStartTime} />
+                <TimePicker label="End Time" selectedTime={endTime} onChange={setEndTime} /> */}
               </>
             )}
           </div>
