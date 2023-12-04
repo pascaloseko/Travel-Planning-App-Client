@@ -1,37 +1,49 @@
-import React, { useState } from 'react';
-import TimePicker from 'react-time-picker';
-import 'react-time-picker/dist/TimePicker.css';
+import React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "react-datepicker/dist/react-datepicker-cssmodules.css";
 
 interface TimeRangePickerProps {
-  onChange: (start: string, end: string) => void;
+  placeholderTextStart: string;
+  placeholderTextEnd: string;
+  selectedStartTime: Date | null;
+  selectedEndTime: Date | null;
+  onChangeStartTime: (date: Date | null) => void;
+  onChangeEndTime: (date: Date | null) => void;
 }
 
-const TimeRangePicker: React.FC<TimeRangePickerProps> = ({ onChange }) => {
-  const [startTime, setStartTime] = useState<string>('00:00');
-  const [endTime, setEndTime] = useState<string>('00:00');
-
-  const handleStartTimeChange = (time: string) => {
-    setStartTime(time);
-    onChange(time, endTime);
-  };
-
-  const handleEndTimeChange = (time: string) => {
-    setEndTime(time);
-    onChange(startTime, time);
-  };
-
+const TimeRangePicker: React.FC<TimeRangePickerProps> = ({
+  placeholderTextStart,
+  placeholderTextEnd,
+  selectedStartTime,
+  selectedEndTime,
+  onChangeStartTime,
+  onChangeEndTime,
+}) => {
   return (
     <div className="flex items-center">
-      <TimePicker
-        value={startTime}
-        onChange={(time) => handleStartTimeChange(time as string)}
-        className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+      <DatePicker
+        selected={selectedStartTime}
+        onChange={(date: Date | null) => onChangeStartTime(date)}
+        showTimeSelect
+        showTimeSelectOnly
+        timeIntervals={15}
+        timeCaption="Time"
+        dateFormat="h:mm aa"
+        className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
+        placeholderText={placeholderTextStart}
       />
       <span className="mx-4 text-gray-500">to</span>
-      <TimePicker
-        value={endTime}
-        onChange={(time) => handleEndTimeChange(time as string)}
-        className="bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5"
+      <DatePicker
+        selected={selectedEndTime}
+        onChange={(date: Date | null) => onChangeEndTime(date)}
+        showTimeSelect
+        showTimeSelectOnly
+        timeIntervals={15}
+        timeCaption="Time"
+        dateFormat="h:mm aa"
+        className="w-full px-3 py-2 border rounded-lg text-gray-700 focus:outline-none focus:border-blue-500"
+        placeholderText={placeholderTextEnd}
       />
     </div>
   );
