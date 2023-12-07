@@ -8,12 +8,18 @@ import { useTripInfoContext } from "../context/TripInfoContext";
 
 const Tabs = () => {
   const [activeTab, setActiveTab] = useState(0);
-  const [tripData, setTripData] = useState([]);
-  const [bookingData, setBookingData] = useState([]);
   const { user } = useAuth();
 
-  const { setSelectedTripInfo, setShowForm, selectedTripInfo, showForm } =
-    useTripInfoContext();
+  const {
+    setSelectedTripInfo,
+    setShowForm,
+    setBookingData,
+    setTripData,
+    bookingData,
+    tripData,
+    selectedTripInfo,
+    showForm,
+  } = useTripInfoContext();
 
   const columns = {
     trip: [

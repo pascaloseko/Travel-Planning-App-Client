@@ -4,6 +4,7 @@ import {
   BuildingStorefrontIcon,
   PencilSquareIcon,
 } from "@heroicons/react/24/solid";
+import moment from "moment-timezone";
 
 interface TableProps {
   data: any[];
@@ -67,6 +68,13 @@ const renderColumnValue = (column, row, onIconClick) => {
     return renderBookingButtons(column.key, row, onIconClick);
   }
 
+  if (column.key === "start_date" || column.key === "check_in_date" || column.key === "departure_date") {
+    // Format date using moment.js
+    return <span className="text-green-500">{formatDate(row[column.key])}</span>;
+  } else if (column.key === "end_date" || column.key === "check_out_date" || column.key === "arrival_date") {
+    return <span className="text-red-500">{formatDate(row[column.key])}</span>;
+  }
+
   return row[column.key];
 };
 
@@ -99,6 +107,22 @@ const renderBookingButtons = (bookingType, row, onIconClick) => {
       ) : null}
     </div>
   );
+};
+
+const formatDate = (dateString: string) => {
+  const dateFormats = ['YYYY-MM-DD', moment.ISO_8601];
+
+  // Try parsing the date using different formats
+  const parsedDate = moment(dateString, dateFormats, true);
+
+  // Check if the date is valid
+  if (parsedDate.isValid()) {
+    // Return the formatted date
+    return parsedDate.format('YYYY-MM-DD HH:mm:ss');
+  }
+
+  // Return the original string if parsing fails
+  return dateString;
 };
 
 export default Table;

@@ -15,7 +15,8 @@ interface InputValues {
 }
 
 const AddForm = () => {
-  const { selectedTripInfo } = useTripInfoContext();
+  const { selectedTripInfo, setTripData, setBookingData, setShowForm } =
+    useTripInfoContext();
   const [startTime, setStartTime] = useState<Date | null>(null);
   const [endTime, setEndTime] = useState<Date | null>(null);
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -57,17 +58,40 @@ const AddForm = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
-        console.log(data);
+        const responseData = await response.json();
+        console.log(responseData);
 
-        handleSuccessNotification();
+        let formattedData = {};
+
+        if (selectedTripInfo.bookingType) {
+          // Use input values for the creation of new entries
+          formattedData = {
+            ...requestBody,
+            [`${selectedTripInfo.bookingType}_id`]:
+              responseData[`${selectedTripInfo.bookingType}_id`],
+          };
+        } else {
+          // Format trip data
+          formattedData = {
+            ...requestBody,
+            trip_id: responseData.trip_id,
+          };
+        }
+
+        // Update the state of the table data based on the booking type
+        if (selectedTripInfo.bookingType) {
+          setBookingData((prevData) => [...prevData, formattedData]);
+        } else {
+          setTripData((prevData) => [...prevData, formattedData]);
+        }
+        return responseData; // Resolve the promise with the response data
       } else {
         console.error("Failed to save data");
-        handleErrorNotification();
+        throw new Error("Failed to save data"); // Reject the promise with an error
       }
     } catch (error) {
       console.error("Error during API call", error);
-      handleErrorNotification();
+      throw error; // Reject the promise with the error
     }
   };
 
@@ -76,8 +100,12 @@ const AddForm = () => {
     showToast(successMessage, "success");
   };
 
-  const handleErrorNotification = () => {
-    showToast("Failed to save data. Please try again.", "error");
+  const handleErrorNotification = (error: any) => {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Failed to save data. Please try again.";
+    showToast(errorMessage, "error");
   };
 
   const getSuccessMessage = () => {
@@ -99,54 +127,68 @@ const AddForm = () => {
   };
 
   // handles save form data
-  const handleSave = () => {
-    let apiEndPoint, requestBody;
+  const handleSave = async () => {
+    try {
+      let apiEndPoint, requestBody;
 
-    switch (selectedTripInfo.bookingType) {
-      case "flight_booking":
-        apiEndPoint = `${DEV_SERVER_URL}/api/v1/protected/${selectedTripInfo.tripID}/flight-bookings`;
-        requestBody = {
-          airline: inputValues.airline,
-          flight_number: inputValues.flight_number,
-          departure_date: combineDateTime(startDate, startTime),
-          arrival_date: combineDateTime(endDate, endTime),
-        };
-        break;
-      case "hotel_booking":
-        apiEndPoint = `${DEV_SERVER_URL}/api/v1/protected/${selectedTripInfo.tripID}/hotel-bookings`;
-        requestBody = {
-          hotel_name: inputValues.hotel_name,
-          check_in_date: combineDateTime(startDate, startTime),
-          check_out_date: combineDateTime(endDate, endTime),
-        };
-        break;
-      case "itinerary":
-        apiEndPoint = `${DEV_SERVER_URL}/api/v1/protected/${selectedTripInfo.tripID}/itinerary`;
-        requestBody = {
-          ...inputValues, // Use the input values dynamically
-          date: startDate.toISOString().split("T")[0],
-        };
-        break;
-      default:
-        apiEndPoint = `${DEV_SERVER_URL}/api/v1/protected/trips`;
-        requestBody = {
-          ...inputValues, // Use the input values dynamically
-          start_date: startDate.toISOString().split("T")[0],
-          end_date: endDate.toISOString().split("T")[0],
-        };
-        break;
+      switch (selectedTripInfo.bookingType) {
+        case "flight_booking":
+          apiEndPoint = `${DEV_SERVER_URL}/api/v1/protected/${selectedTripInfo.tripID}/flight-bookings`;
+          requestBody = {
+            airline: inputValues.airline,
+            flight_number: inputValues.flight_number,
+            departure_date: combineDateTime(startDate, startTime),
+            arrival_date: combineDateTime(endDate, endTime),
+          };
+          break;
+        case "hotel_booking":
+          apiEndPoint = `${DEV_SERVER_URL}/api/v1/protected/${selectedTripInfo.tripID}/hotel-bookings`;
+          requestBody = {
+            hotel_name: inputValues.hotel_name,
+            check_in_date: combineDateTime(startDate, startTime),
+            check_out_date: combineDateTime(endDate, endTime),
+          };
+          break;
+        case "itinerary":
+          apiEndPoint = `${DEV_SERVER_URL}/api/v1/protected/${selectedTripInfo.tripID}/itinerary`;
+          requestBody = {
+            ...inputValues, // Use the input values dynamically
+            date: moment(startDate).format("YYYY-MM-DD"),
+          };
+          break;
+        default:
+          apiEndPoint = `${DEV_SERVER_URL}/api/v1/protected/trips`;
+          requestBody = {
+            ...inputValues, // Use the input values dynamically
+            start_date: moment(startDate).format("YYYY-MM-DD"),
+            end_date: moment(endDate).format("YYYY-MM-DD"),
+          };
+          break;
+      }
+
+      const requiredFieldsFilled =
+        (Object.values(inputValues).every(Boolean) && startDate !== null) ||
+        endDate !== null;
+
+      if (!requiredFieldsFilled) {
+        console.log("Please fill in all required fields.");
+        return;
+      }
+
+      const responseData = await saveFormData(apiEndPoint, requestBody);
+
+      // Clear inputs and hide form
+      setInputValues({});
+      setStartTime(null);
+      setEndTime(null);
+      setStartDate(null);
+      setEndDate(null);
+      setShowForm(false);
+      console.info(responseData);
+      handleSuccessNotification();
+    } catch (error) {
+      handleErrorNotification(error);
     }
-
-    const requiredFieldsFilled =
-      (Object.values(inputValues).every(Boolean) && startDate !== null) ||
-      endDate !== null;
-
-    if (!requiredFieldsFilled) {
-      console.log("Please fill in all required fields.");
-      return;
-    }
-
-    saveFormData(apiEndPoint, requestBody);
   };
 
   const combineDateTime = (date: Date, time: Date | null): string => {
