@@ -127,7 +127,7 @@ const Tabs = () => {
       setBookingData(data);
 
       // Set selectedTripInfo to null if booking data is empty
-      if (!data || data.length === 0) {
+      if (!data) {
         setSelectedTripInfo({ tripID: null, bookingType: null });
       }
     } catch (error) {
