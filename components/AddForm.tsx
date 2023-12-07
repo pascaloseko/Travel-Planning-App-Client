@@ -6,6 +6,7 @@ import TimeRangePicker from "./TimeRangePicker";
 import { DEV_SERVER_URL } from "../config";
 import { useAuth } from "../context/AuthContext";
 import moment from "moment-timezone";
+import useToast from "../hooks/toast";
 
 interface InputValues {
   airline?: string;
@@ -21,6 +22,7 @@ const AddForm = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [inputValues, setInputValues] = useState<InputValues>({});
   const { user } = useAuth();
+  const { showToast } = useToast();
 
   const handleDateChange = (date: Date | null) => {
     if (!startDate) {
@@ -57,12 +59,43 @@ const AddForm = () => {
       if (response.ok) {
         const data = await response.json();
         console.log(data);
+
+        handleSuccessNotification();
       } else {
         console.error("Failed to save data");
+        handleErrorNotification();
       }
     } catch (error) {
       console.error("Error during API call", error);
+      handleErrorNotification();
     }
+  };
+
+  const handleSuccessNotification = () => {
+    const successMessage = getSuccessMessage();
+    showToast(successMessage, "success");
+  };
+
+  const handleErrorNotification = () => {
+    showToast("Failed to save data. Please try again.", "error");
+  };
+
+  const getSuccessMessage = () => {
+    if (selectedTripInfo.bookingType) {
+      const formattedBookingType = formatBookingType(
+        selectedTripInfo.bookingType
+      );
+      return `${formattedBookingType} added successfully!`;
+    } else {
+      return "Trip added successfully!";
+    }
+  };
+
+  const formatBookingType = (bookingType: string) => {
+    return bookingType
+      .split("_")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
   };
 
   // handles save form data
@@ -105,16 +138,13 @@ const AddForm = () => {
     }
 
     const requiredFieldsFilled =
-      Object.values(inputValues).every(Boolean) &&
-      startDate !== null ||
+      (Object.values(inputValues).every(Boolean) && startDate !== null) ||
       endDate !== null;
 
     if (!requiredFieldsFilled) {
       console.log("Please fill in all required fields.");
       return;
     }
-
-    console.log("clicked!")
 
     saveFormData(apiEndPoint, requestBody);
   };
