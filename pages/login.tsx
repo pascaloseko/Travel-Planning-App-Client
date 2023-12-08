@@ -9,7 +9,7 @@ const LoginPage = () => {
   const { login, loading } = useAuth();
 
   const handleLogin = async ({ email, password }) => {
-    return login(email, password);
+    return await login(email, password);
   };
 
   const handleLoginSuccess = () => {

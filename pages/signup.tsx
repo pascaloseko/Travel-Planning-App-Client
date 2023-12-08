@@ -9,7 +9,7 @@ const SignupPage = () => {
   const { signUp, loading } = useAuth();
 
   const handleSignup = async ({ username, email, password }) => {
-    return signUp(username, email, password);
+    return await signUp(username, email, password);
   };
 
   const handleSignupSuccess = () => {
