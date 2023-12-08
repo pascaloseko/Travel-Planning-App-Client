@@ -58,8 +58,8 @@ const AddForm = () => {
       });
 
       if (response.ok) {
+        handleSuccessNotification();
         const responseData = await response.json();
-        console.log(responseData);
 
         let formattedData = {};
 
@@ -74,7 +74,7 @@ const AddForm = () => {
           // Format trip data
           formattedData = {
             ...requestBody,
-            trip_id: responseData.trip_id,
+            id: responseData.trip_id,
           };
         }
 
@@ -84,6 +84,7 @@ const AddForm = () => {
         } else {
           setTripData((prevData) => [...prevData, formattedData]);
         }
+
         return responseData; // Resolve the promise with the response data
       } else {
         console.error("Failed to save data");
@@ -185,7 +186,6 @@ const AddForm = () => {
       setEndDate(null);
       setShowForm(false);
       console.info(responseData);
-      handleSuccessNotification();
     } catch (error) {
       handleErrorNotification(error);
     }
