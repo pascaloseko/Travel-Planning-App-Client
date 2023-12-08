@@ -42,6 +42,8 @@ const DashboardContent = () => {
   const renderPageTitle = () => {
     if (activeItem === "your trips") {
       return null; // Don't render the title for "your trips"
+    } else if(activeItem === "profile") {
+      return null;
     }
     return (
       <h1 className="text-2xl font-semibold">
