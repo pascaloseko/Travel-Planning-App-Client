@@ -17,6 +17,7 @@ interface User {
   user_id: number;
   username: string;
   token: string;
+  profile_image: string;
   tokenExpiration: number;
   refreshToken: string;
 }

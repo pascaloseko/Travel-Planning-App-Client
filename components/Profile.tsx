@@ -1,11 +1,20 @@
 import React, { useState, ChangeEvent } from "react";
 import { useAuth } from "../context/AuthContext";
 
+enum PreviewImageType {
+  StringByte = "stringByte",
+  String = "string",
+}
+
 const Profile = () => {
   const { user } = useAuth();
   const [username, setUsername] = useState<string>(user.username);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
-  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(
+    user.profile_image
+  );
+  const [previewImageType, setPreviewImageType] =
+    useState<PreviewImageType | null>(null);
 
   const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
@@ -16,6 +25,7 @@ const Profile = () => {
 
     if (file) {
       setProfilePicture(file);
+      setPreviewImageType(PreviewImageType.String);
 
       // preview the image
       const reader = new FileReader();
@@ -26,6 +36,7 @@ const Profile = () => {
     } else {
       setProfilePicture(null);
       setPreviewImage(null);
+      setPreviewImageType(null);
     }
   };
 
@@ -40,7 +51,11 @@ const Profile = () => {
         </label>
         {previewImage ? (
           <img
-            src={previewImage}
+            src={
+              previewImageType === PreviewImageType.String
+                ? previewImage
+                : `data:image/png;base64,${previewImage}`
+            }
             alt="Preview"
             className="mt-2 mb-4 w-32 h-32 object-cover rounded-full"
           />
