@@ -1,12 +1,14 @@
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { DEV_SERVER_URL } from "../config";
+import useToast from "../hooks/toast";
 
 enum PreviewImageType {
   StringByte = "stringByte",
   String = "string",
 }
 
-const Profile = () => {
+const Profile: React.FC = () => {
   const { user } = useAuth();
   const [username, setUsername] = useState<string>(user.username);
   const [profilePicture, setProfilePicture] = useState<File | null>(null);
@@ -15,6 +17,22 @@ const Profile = () => {
   );
   const [previewImageType, setPreviewImageType] =
     useState<PreviewImageType | null>(null);
+  const [imageSrc, setImageSrc] = useState<string | null>(null);
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (imageSrc) {
+      URL.revokeObjectURL(imageSrc);
+    }
+  }, [imageSrc]);
+
+  useEffect(() => {
+    if (user.profile_image) {
+      const blob = base64ToBlob(user.profile_image);
+      const objectURL = URL.createObjectURL(blob);
+      setImageSrc(objectURL);
+    }
+  }, [user.profile_image]);
 
   const handleUsernameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setUsername(e.target.value);
@@ -40,6 +58,61 @@ const Profile = () => {
     }
   };
 
+  const base64ToBlob = (base64String: string): Blob => {
+    const byteCharacters = atob(base64String);
+    const byteNumbers = new Array<number>(byteCharacters.length);
+
+    for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    return new Blob([byteArray], { type: "image/*" });
+  };
+
+  const handleSuccessNotification = (successMessage: string) => {
+    showToast(successMessage, "success");
+  };
+
+  const handleStrErrorNotification = (errorMessage: string) => {
+    showToast(errorMessage, "success");
+  };
+
+  const handleErrorNotification = (error: any) => {
+    const errorMessage =
+      error instanceof Error
+        ? error.message
+        : "Failed to save data. Please try again.";
+    showToast(errorMessage, "error");
+  };
+
+  const handleSaveChanges = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("profile_image", profilePicture!);
+
+      const response = await fetch(`${DEV_SERVER_URL}/api/v1/protected/upload-profile`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+        body: formData,
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+
+        if (responseData) {
+          handleSuccessNotification("added profile image");
+        } else {
+          handleStrErrorNotification("error uploading image");
+        }
+      }
+    } catch (error) {
+      handleErrorNotification(error);
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto p-6 bg-white border rounded-md shadow-md">
       <h1 className="text-2xl font-semibold mb-4">Profile</h1>
@@ -49,17 +122,17 @@ const Profile = () => {
         <label className="block text-sm font-medium text-gray-600">
           Profile Picture
         </label>
-        {previewImage ? (
+        {previewImage && (
           <img
             src={
               previewImageType === PreviewImageType.String
                 ? previewImage
-                : `data:image/png;base64,${previewImage}`
+                : imageSrc || ""
             }
             alt="Preview"
             className="mt-2 mb-4 w-32 h-32 object-cover rounded-full"
           />
-        ) : null}
+        )}
         <input
           type="file"
           accept="image/*"
@@ -82,7 +155,10 @@ const Profile = () => {
       </div>
 
       {/* Save Button */}
-      <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
+      <button
+        className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+        onClick={handleSaveChanges}
+      >
         Save Changes
       </button>
     </div>
