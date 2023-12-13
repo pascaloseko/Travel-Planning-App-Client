@@ -70,20 +70,8 @@ const Profile: React.FC = () => {
     return new Blob([byteArray], { type: "image/*" });
   };
 
-  const handleSuccessNotification = (successMessage: string) => {
-    showToast(successMessage, "success");
-  };
-
-  const handleStrErrorNotification = (errorMessage: string) => {
-    showToast(errorMessage, "success");
-  };
-
-  const handleErrorNotification = (error: any) => {
-    const errorMessage =
-      error instanceof Error
-        ? error.message
-        : "Failed to save data. Please try again.";
-    showToast(errorMessage, "error");
+  const showToastNotification = (message: string, type: "success" | "error") => {
+    showToast(message, type);
   };
 
   const handleSaveChanges = async () => {
@@ -91,25 +79,36 @@ const Profile: React.FC = () => {
       const formData = new FormData();
       formData.append("profile_image", profilePicture!);
 
-      const response = await fetch(`${DEV_SERVER_URL}/api/v1/protected/upload-profile`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${user?.token}`,
-        },
-        body: formData,
-      });
+      const response = await fetch(
+        `${DEV_SERVER_URL}/api/v1/protected/upload-profile`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${user?.token}`,
+          },
+          body: formData,
+        }
+      );
 
       if (response.ok) {
         const responseData = await response.json();
 
+        setProfilePicture(profilePicture);
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setPreviewImage(reader.result as string);
+        };
+        reader.readAsDataURL(profilePicture);
+
         if (responseData) {
-          handleSuccessNotification("added profile image");
+          showToastNotification("Profile image added", "success");
         } else {
-          handleStrErrorNotification("error uploading image");
+          showToastNotification("Error uploading image", "error");
         }
       }
     } catch (error) {
-      handleErrorNotification(error);
+      showToastNotification("Failed to save data. Please try again.", "error");
     }
   };
 
